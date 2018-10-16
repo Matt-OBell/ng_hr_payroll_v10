@@ -19,15 +19,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 ##############################################################################
-
-from . import ng_hr_payroll
-from . import ng_hr_salary
-from . import ng_hr_payroll_overtime
-from . import ng_hr_union
-from . import ng_hr_terminal
+from . import models
 from . import report
 from . import wizard
-from . import company
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
