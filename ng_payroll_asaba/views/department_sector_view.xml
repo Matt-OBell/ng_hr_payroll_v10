@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form view goes here -->
+        <record id="view_form_department_sector" model="ir.ui.view">
+            <field name="name">view.form.department.sector</field>
+            <field name="model">department.sector</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <notebook>
+                        <page string="Grades">
+                            <group>
+                                <field name="grade_ids" nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <!-- Department Sector Form Action -->
+        <record id="action_dept_sector" model="ir.actions.act_window">
+            <field name="name">Department Sector</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">department.sector</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new sector record
+              </p><p>
+                Examples are: LGA, LEA ...
+              </p>
+            </field>
+        </record>
+
+        <!-- Department sector menu -->
+        <menuitem
+                id="dept_sector_menu"
+                name="Department Sector"
+                parent="hr_payroll.menu_hr_payroll_configuration"
+                sequence="4"
+                action="action_dept_sector"
+                />
+
+    </data>
+</odoo>

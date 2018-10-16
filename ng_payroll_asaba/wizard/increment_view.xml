@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+       <record id="view_employee_increment_form" model="ir.ui.view">
+           <field name="name">view.employee.increment.form</field>
+           <field name="model">employee.increment</field>
+           <field name="arch" type="xml">
+               <form string="Employee Increment">
+                   <div class="oe_right">
+                       <button name="get_all_emp" string="Get Employees" type="object" class="oe_highlight"
+                       attrs="{'invisible': ['|', ('period_increment', '=', False), ('dept_sector', '=', False)]}"/>
+                   </div>
+                   <field name="employee_ids" />
+                   <group>
+                       <group>
+                           <field name="period_increment"/>
+                       </group>
+                       <group>
+                           <field name="dept_sector" widget="selection"/>
+                       </group>
+                   </group>
+                   <footer>
+                       <button name="do_increment" string="Do Increment" type="object" class="oe_highlight"
+                               attrs="{'invisible': [
+                               '|', ('period_increment', '=', False),
+                               ('dept_sector', '=', False)
+                               ]}"/>
+                       <button special="cancel" string="Cancel"/>
+                   </footer>
+               </form>
+           </field>
+       </record>
+
+        <!-- Employee Increment Wizard -->
+        <act_window
+                id="action_employee_increment_wizard"
+                name="Employee Increment"
+                res_model="employee.increment"
+                view_mode="form"
+                multi="True"
+                target="new"
+                />
+
+        <!-- Increment / Promotion Parent menu -->
+        <menuitem
+                id="menu_employee_increment_promo"
+                name="Increment/Promotion"
+                parent="hr_payroll.menu_hr_payroll_configuration"
+        />
+
+        <!-- Increment Menu -->
+        <menuitem
+                id="menu_employee_increment"
+                name="Increment"
+                parent="menu_employee_increment_promo"
+                action="action_employee_increment_wizard"
+                sequence="0"
+        />
+
+    </data>
+</odoo>
