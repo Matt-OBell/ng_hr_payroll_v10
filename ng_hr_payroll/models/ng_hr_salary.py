@@ -4,11 +4,11 @@
 import time
 
 from odoo import fields, models, api, _
-import odoo.addons.decimal_precision as dp
 import re
 from odoo.exceptions import Warning
 
 DATETIME_FORMAT = "%Y-%m-%d"
+
 
 class pfa(models.Model):
     _name = 'pfa'
@@ -37,7 +37,8 @@ class pfa(models.Model):
             if not email_re.match(self.email):
                 raise Warning(_('Please enter valid email address'))
         return True
-    
+
+
 class hmo(models.Model):
     _name = 'hmo'
     
@@ -66,7 +67,8 @@ class hmo(models.Model):
             if not email_re.match(self.email):
                 raise Warning(_('Please enter valid email address'))
         return True
-    
+
+
 class hr_employee(models.Model):
     _inherit = 'hr.employee'
     _description = 'Employee'
@@ -76,9 +78,6 @@ class hr_employee(models.Model):
     reason = fields.Text(string='Reason For Leaving')
     pfa_id = fields.Many2one('pfa', string='Pension Funds Administrator')
     hmo_id = fields.Many2one('hmo', string='Health Management Organization')
-#        'ref_ids': fields.one2many('refs', 'emp_id', string='References'),
-#        'gua_ids': fields.one2many('guarantor', 'emp_id', string='Guarantors'),
-#        'kin_ids': fields.one2many('nextofkin', 'emp_id', string='Next of Kin'),
     pfa_id_ref = fields.Char(string='PFA ID')
     hmo_id_ref = fields.Char(string='HMO ID')
 
@@ -86,6 +85,7 @@ class hr_employee(models.Model):
         ('pfa_id_ref_unique', 'unique(pfa_id_ref)', _('The PFA ID must be unique!')),
         ('hmo_id_ref_unique', 'unique(hmo_id_ref)', _('The HMO ID must be unique!'))
     ]    
+
 
 class contract_history(models.Model):
     '''
@@ -98,7 +98,6 @@ class contract_history(models.Model):
     revision_date = fields.Datetime(string='Date')
     contract_id = fields.Many2one('hr.contract', string='Contract')
     increment_id = fields.Many2one('salary.increment', string='Increment')
-#     apprisal_id = fields.Many2one('hr_evaluation.evaluation', string='Apprisal')#todoprobuse
     wage = fields.Float(string='Wage', digits=(16, 2), help='Basic Salary of the employee')
     employee_id = fields.Many2one('hr.employee', string='Employee')
     struct_id = fields.Many2one('hr.payroll.structure', string='Salary Structure')

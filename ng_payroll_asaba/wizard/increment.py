@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from odoo import _, api, models, fields
-
+from odoo.exceptions import ValidationError
 
 class Increment(models.TransientModel):
     """Manage increments for employees"""
@@ -48,16 +48,22 @@ class Increment(models.TransientModel):
                 if employee_step['sequence'] < max(all_steps.mapped('sequence')):
                     next_sequence = employee_step.sequence + 1
                     next_step = all_steps.filtered(lambda step: step.sequence == next_sequence)
-                    employee.write({
-                        'step_id': next_step.id,
-                    })
 
-                    new_contract = self.env['hr.contract'].search([
+                    emp_contract = self.env['hr.contract'].search([('employee_id', '=', employee.id)], limit=1)
+
+                    new_template = self.env['salary.template'].search([
                         ('department_sector_id', '=', employee.department_sector_id.id),
+                        ('employment_type_id', '=', employee.employment_type_id.id),
                         ('grade_id', '=', employee.grade_id.id),
                         ('step_id', '=', next_step.id),
                         ], limit=1)
 
-                    if new_contract:
-                        new_contract.write({'employee_id': employee.id})
+                    try:
+                        emp_contract.write({'template_id': new_template.id})
+                    except Exception:
+                        raise ValidationError("Oooops something went wrong")
+                    else:
+                        employee.write({
+                            'step_id': next_step.id
+                        })
         return True

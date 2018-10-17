@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from odoo import api, models, fields
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class EmployeePromotion(models.TransientModel):
@@ -66,17 +66,23 @@ class EmployeePromotion(models.TransientModel):
                     next_grade = all_grades.filtered(lambda grade: grade.sequence == next_sequence)
                     next_step = next_grade.step_ids.filtered(
                         lambda step: step.sequence == min(next_grade.step_ids.mapped('sequence')))
-                    employee.write({
-                        'grade_id': next_grade.id,
-                        'step_id': next_step.id or 0,
-                    })
 
-                    new_contract = self.env['hr.contract'].search([
+                    emp_contract = self.env['hr.contract'].search([('employee_id', '=', employee.id)], limit=1)
+
+                    new_template = self.env['salary.template'].search([
                         ('department_sector_id', '=', employee.department_sector_id.id),
+                        ('employment_type_id', '=', employee.employment_type_id.id),
                         ('grade_id', '=', next_grade.id),
                         ('step_id', '=', next_step.id),
                     ], limit=1)
 
-                    if new_contract:
-                        new_contract.write({'employee_id': employee.id})
+                    try:
+                        emp_contract.write({'template_id': new_template.id})
+                    except Exception as e:
+                        raise ValidationError("{}".format(e))
+                    else:
+                        employee.write({
+                            'grade_id': next_grade.id,
+                            'step_id': next_step.id or 0,
+                        })
         return self.write({'state': 'done'})

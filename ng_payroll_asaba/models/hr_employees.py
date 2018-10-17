@@ -16,10 +16,10 @@ class Employee(models.Model):
         This field is to specify when the increment should be done for this particular employee""")
     # Relational Fields
     department_sector_id = fields.Many2one('department.sector', string="Department Sector")
-    grade_id = fields.Many2one(comodel_name="emp.grade", string="Grade",
-                               # domain="[('dept_sector_id', '=', department_sector_id)]"
-                               )
+    grade_id = fields.Many2one(comodel_name="emp.grade", string="Grade")
     step_id = fields.Many2one(comodel_name="emp.step", string="Step")
+    employment_type_id = fields.Many2one('employment.type', string="Employment Type")
+
     # Date fields
     date_appointment = fields.Date("Appointment Date")
     date_retirement = fields.Date(string="Date of Retirement", compute="_compute_date_of_retirement")

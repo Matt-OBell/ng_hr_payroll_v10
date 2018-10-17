@@ -32,6 +32,7 @@
         'views/department_sector_view.xml',
         'views/emp_grade_view.xml',
         'views/emp_step_view.xml',
+        'views/employment_type.xml',
         'data/employee_id_sequence.xml',
         'data/employee_retirement_email.xml',
         'wizard/increment_view.xml',

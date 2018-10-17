@@ -7,3 +7,4 @@ from . import department_sector
 from . import emp_grade
 from . import emp_step
 from . import salary_template
+from . import employment_type

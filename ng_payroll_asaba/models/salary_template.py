@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
-from odoo import models, fields
+
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class SalaryTemplate(models.Model):
@@ -25,6 +27,9 @@ class SalaryTemplate(models.Model):
     When a new record is created, the state is draft
     When the contract is confirmed, the state changes to confirm
     Contracts are only selectable from other models""")
+
+    parent_id = fields.Many2one('salary.template', string='Parent Template', index=True)
+    child_ids = fields.One2many('salary.template', 'parent_id', string=' Sub Template')
 
     # Float fields
     basic = fields.Float(string='Basic')
@@ -52,3 +57,11 @@ class SalaryTemplate(models.Model):
                                # domain=[('dept_sector_id', '=', department_sector_id)]
                                )
     step_id = fields.Many2one(comodel_name="emp.step", string="Step")
+    employment_type_id = fields.Many2one('employment.type', string="Employment Type")
+
+    @api.constrains('parent_id')
+    def _check_parent_id(self):
+        if not self._check_recursion():
+            raise ValidationError(_('Error ! You can not create recursive parent tags.'))
+        if self.child_ids:
+            raise ValidationError(_("Error ! Parent Template can't have a parent"))

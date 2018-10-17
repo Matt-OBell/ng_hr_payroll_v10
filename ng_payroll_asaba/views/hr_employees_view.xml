@@ -19,6 +19,7 @@
                     <group>
                         <field name="auto_staff_id"/>
                         <field name="month_increment"/>
+                        <field name="employment_type_id"/>
                     </group>
                 </xpath>
 
