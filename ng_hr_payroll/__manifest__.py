@@ -7,7 +7,7 @@
     'author': 'Mattobell',
     'website': 'http://www.mattobell.com',
     'depends': ['hr', 'hr_payroll', 'crm', 'hr_holidays', 'hr_payroll_account'],
-    'version': '1.0',
+    'version': '1.0.1',
     'description': """
     Nigeria Payroll Salary Rules
     Configuration of hr_payroll for Nigeria localization

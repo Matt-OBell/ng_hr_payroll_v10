@@ -7,6 +7,7 @@ class EmployeeStep(models.Model):
 
     _name = 'emp.step'
     _order = 'sequence,name'
+    _description = 'Step'
 
     sequence = fields.Integer('Sequence')
     name = fields.Char(string='Step', required=True)

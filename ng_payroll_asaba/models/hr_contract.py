@@ -26,7 +26,7 @@ class HrContract(models.Model):
     utility = fields.Float(string='Utility', readonly=True, compute="_compute_field_value", store=True)
 
     # Relational fields
-    department_sector_id = fields.Many2one(comodel_name="department.sector", string="Department Sector", readonly=True)
+    department_sector_id = fields.Many2one(comodel_name="department.sector", string="Department Sector")
     grade_id = fields.Many2one(comodel_name="emp.grade", string="Grade", readonly=True)
     step_id = fields.Many2one(comodel_name="emp.step", string="Step", readonly=True)
     template_id = fields.Many2one('salary.template', string="Template", domain="[('department_sector_id', '=', department_sector_id), ('grade_id', '=', grade_id), ('step_id', '=', step_id)]")

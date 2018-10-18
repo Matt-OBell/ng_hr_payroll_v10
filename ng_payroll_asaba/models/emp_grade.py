@@ -6,6 +6,7 @@ class EmployeeGrade(models.Model):
 
     _name = 'emp.grade'
     _order = 'sequence,name'
+    _description = 'Grade'
 
     name = fields.Char(string='Grade', required=True)
     sequence = fields.Integer(string="Integer")

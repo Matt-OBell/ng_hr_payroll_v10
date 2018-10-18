@@ -3,6 +3,7 @@
 from odoo import _, api, models, fields
 from odoo.exceptions import ValidationError
 
+
 class Increment(models.TransientModel):
     """Manage increments for employees"""
 

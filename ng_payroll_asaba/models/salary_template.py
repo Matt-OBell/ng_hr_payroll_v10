@@ -19,6 +19,8 @@ class SalaryTemplate(models.Model):
         self.write({'state': 'draft'})
 
     _name = 'salary.template'
+    _description = 'Salary Template'
+
     name = fields.Char(string="Description")
     state = fields.Selection(selection=[
         ('draft', 'New'),
