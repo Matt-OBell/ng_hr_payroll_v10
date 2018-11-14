@@ -19,6 +19,8 @@ class Employee(models.Model):
     grade_id = fields.Many2one(comodel_name="emp.grade", string="Grade")
     step_id = fields.Many2one(comodel_name="emp.step", string="Step")
     employment_type_id = fields.Many2one('employment.type', string="Employment Type")
+    lga_id = fields.Many2one(comodel_name="local.government", string="LGA")
+    school_id = fields.Many2one(comodel_name="employee.school", string="School")
 
     # Date fields
     date_appointment = fields.Date("Appointment Date")

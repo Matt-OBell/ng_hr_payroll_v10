@@ -23,6 +23,12 @@
                     </group>
                 </xpath>
 
+                <xpath expr="//notebook//page[1]//group//group[1]" position="inside">
+                    <separator string="Extra info"/>
+                    <field name="lga_id"/>
+                    <field name="school_id"/>
+                </xpath>
+
                 <xpath expr="//notebook//page[1]/group" position="after">
                     <!-- Add your fields or attributes here -->
                     <group>
@@ -52,6 +58,22 @@
                     </group>
                 </xpath>
             </field>
+        </record>
+
+        <record id="hr_employee_search_inherit" model="ir.ui.view">
+           <field name="name">hr.employee.search.inherit</field>
+           <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="school_id"/>
+                    <field name="lga_id"/>
+                </xpath>
+                <xpath expr="//group" position="inside">
+                    <filter name="group_school" string="School" domain="[]" context="{'group_by':'school_id'}"/>
+                    <filter name="group_lga" string="LGA" domain="[]" context="{'group_by':'lga_id'}"/>
+                </xpath>
+           </field>
         </record>
 
     </data>

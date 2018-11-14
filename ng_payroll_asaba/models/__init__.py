@@ -8,3 +8,5 @@ from . import emp_grade
 from . import emp_step
 from . import salary_template
 from . import employment_type
+from . import employee_school
+from . import local_government

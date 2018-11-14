@@ -24,7 +24,7 @@
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/salary_template_view.xml',
         'views/hr_contract_view.xml',
         'views/res_company_view.xml',
@@ -33,6 +33,8 @@
         'views/emp_grade_view.xml',
         'views/emp_step_view.xml',
         'views/employment_type.xml',
+        'views/employee_school.xml',
+        'views/local_government.xml',
         'data/employee_id_sequence.xml',
         'data/employee_retirement_email.xml',
         'wizard/increment_view.xml',

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="local_government_tree_view" model="ir.ui.view">
+            <field name="name">local.government.tree.view</field>
+            <field name="model">local.government</field>
+            <field name="arch" type="xml">
+                <tree string="Local government">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="local_government_form_view" model="ir.ui.view">
+            <field name="name">local.government.form.view</field>
+            <field name="model">local.government</field>
+            <field name="arch" type="xml">
+                <form string="Local government">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="code"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="local_government_action" model="ir.actions.act_window">
+            <field name="name">Local government</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">local.government</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+                  Click to create a new local government
+              </p><p>
+                <!-- More details about what a user can do with this object will be OK -->
+              </p>
+            </field>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="local_government_menu"
+                  name="Local Government"
+                  parent="hr.menu_human_resources_configuration"
+                  action="local_government_action"
+                  sequence=""/>
+
+    </data>
+</odoo>
