@@ -21,12 +21,22 @@
 ##############################################################################
 
 import time
-import datetime
 from odoo import api, fields, models
-
+from odoo.exceptions import ValidationError
 
 class payroll_register_report(models.AbstractModel):
     _name = "report.ng_hr_payroll.payroll_register_report"
+
+    # Additional fields requested to be added to the report
+    ADDITIONAL_HR_FIELDS = [
+        ('auto_staff_id', 'Staff ID'),
+        ('lga_id', 'Local Government'),
+        ('school_id', 'School'),
+        ('job_id', 'Designation'),
+        ('grade_id', 'Grade'),
+        ('step_id', 'Step'),
+        ('template_id', 'Salary Template')
+    ]
 
     mnths = []
     mnths_total = []
@@ -35,97 +45,50 @@ class payroll_register_report(models.AbstractModel):
     
     total = 0.0
 
-    def get_periods(self, form):
-#       Get start year-month-date and end year-month-date
-#        first_year = int(form['start_date'][0:4])
-#        last_year = int(form['end_date'][0:4])
-#
-#        first_month = int(form['start_date'][5:7])
-#        last_month = int(form['end_date'][5:7])
-#        no_months = (last_year-first_year) * 12 + last_month - first_month + 1
-#        current_month = first_month
-#        current_year = first_year
-#
-##       Get name of the months from integer
-#        mnth_name = []
-#        for count in range(0, no_months):
-#            m = datetime.date(current_year, current_month, 1).strftime('%b')
-#            mnth_name.append(m)
-#            self.mnths.append(str(current_month) + '-' + str(current_year))
-#            if current_month == 12:
-#                current_month = 0
-#                current_year = last_year
-#            current_month = current_month + 1
-#        for c in range(0, (12-no_months)):
-#            mnth_name.append('None')
-#            self.mnths.append('None')
-#            
-            
+    def get_periods(self, form, additional_fields=None):
         mnth_name = []
         rules = []
-#        category_id = form.get('category_id', [])
-#        category_id = category_id and category_id[0] or False
-#        rule_ids = self.pool.get('hr.salary.rule').search(self.cr, self.uid, [('category_id', '=', category_id)])  
-        rule_ids = form.get('rule_ids', [])  
+        rule_ids = form.get('rule_ids', [])
         if rule_ids:
             for r in self.env['hr.salary.rule'].browse(rule_ids):
                 mnth_name.append(r.name)
                 rules.append(r.id)
-        self.rules =rules
-        self.rules_data = mnth_name
-        return [mnth_name]
+        self.rules = rules
+        if additional_fields is None:
+            additional_fields = self.ADDITIONAL_HR_FIELDS
+        additional_headers = [field_name for (_, field_name) in additional_fields]
+        self.rules_data = additional_headers + mnth_name if additional_fields and isinstance(additional_fields, list) \
+            else mnth_name
+        return [additional_headers + mnth_name] if additional_fields else [mnth_name]
+
+    def append_additional_fields(self, primary_list, additional_fields):
+        if not (isinstance(primary_list, list) and isinstance(additional_fields, list)):
+            raise ValidationError("A list is required")
+        employee = self.env['hr.employee'].search([('name', 'ilike', primary_list[0])], limit=1)
+        for field, field_string in additional_fields:
+            if field in employee._fields:
+                if type(employee[field]) not in ['int', 'str', 'float']:
+                    try:
+                        primary_list.append(employee[field].name or '')
+                    except AttributeError:
+                        primary_list.append('')
+                else:
+                    try:
+                        primary_list.append(employee[field])
+                    except AttributeError:
+                        primary_list.append('')
+            else:
+                contract = self.env['hr.contract'].search([('employee_id','=', employee.id)], limit=1)
+                template = contract.template_id.name
+                template = template or ''
+                primary_list.append(template)
+        return primary_list
 
     def get_salary(self, form, emp_id, emp_salary, total_mnths):
-#        category_id = form.get('category_id', [])
-#        category_id = category_id and category_id[0] or False
-        
-#        self.cr.execute("select to_char(date_to,'mm-yyyy') as to_date ,sum(pl.total) \
-#                             from hr_payslip_line as pl \
-#                             left join hr_payslip as p on pl.slip_id = p.id \
-#                             left join hr_employee as emp on emp.id = p.employee_id \
-#                             left join resource_resource as r on r.id = emp.resource_id  \
-#                            where p.state = 'done' and p.employee_id = %s and pl.category_id = %s \
-#                            group by r.name, p.date_to,emp.id",(emp_id, category_id,))
-#
-#        sal = self.cr.fetchall()
-#        salary = dict(sal)
-#        total = 0.0
-#        cnt = 1
-#        for month in self.mnths:
-#            if month <> 'None':
-#                if len(month) != 7:
-#                    month = '0' + str(month)
-#                if month in salary and salary[month]:
-#                    emp_salary.append(salary[month])
-#                    total += salary[month]
-#                    total_mnths[cnt] = total_mnths[cnt] + salary[month]
-#                else:
-#                    emp_salary.append(0.00)
-#            else:
-#                emp_salary.append('')
-#                total_mnths[cnt] = ''
-#            cnt = cnt + 1
-#        
-        
-        
-#        emp_obj = self.pool.get('hr.employee')        
-#        eid = emp_obj.browse(self.cr, self.uid, emp_id, context=self.context)
-#        emp_salary.append(eid.name)
         total = 0.0
         cnt = 0
         flag = 0
-#        for r in self.rules:
         for r in self.env['hr.salary.rule'].browse(self.rules):
-#            self.cr.execute("select pl.name as name ,pl.total \
-#                                 from hr_payslip_line as pl \
-#                                 left join hr_payslip as p on pl.slip_id = p.id \
-#                                 left join hr_payslip_run as pr on pr.id = p.payslip_run_id \
-#                                 left join hr_employee as emp on emp.id = p.employee_id \
-#                                 left join resource_resource as r on r.id = emp.resource_id  \
-#                                where p.employee_id = %s and pl.salary_rule_id = %s \
-#                                and (p.date_from >= %s) AND (p.date_to <= %s) \
-#                                and (pr.state != 'cancel')\
-#                                group by pl.total,r.name, pl.name,emp.id",(emp_id, r, form.get('start_date', False), form.get('end_date', False),))
             self._cr.execute("select pl.name as name ,pl.total \
                                  from hr_payslip_line as pl \
                                  left join hr_payslip as p on pl.slip_id = p.id \
@@ -136,8 +99,8 @@ class payroll_register_report(models.AbstractModel):
                                 group by pl.total,r.name, pl.name,emp.id",(emp_id, r.id, form.get('start_date', False), form.get('end_date', False),))
             sal = self._cr.fetchall()
             salary = dict(sal)
-            cnt +=1
-            flag +=1
+            cnt += 1
+            flag += 1
             if flag > 8:
                 continue
             if r.name in salary:
@@ -146,24 +109,7 @@ class payroll_register_report(models.AbstractModel):
                 total_mnths[cnt] = total_mnths[cnt] + salary[r.name]
             else:
                 emp_salary.append('')
-#                total_mnths[cnt] = 0.0
-#            total = 0.0
-#            cnt = 1
-#            for month in self.rules_data:
-#                if month <> 'None':
-#                    if len(month) != 7:
-#                        month = '0' + str(month)
-#                    if month in salary and salary[month]:
-#                        emp_salary.append(salary[month])
-#                        total += salary[month]
-#                        total_mnths[cnt] = total_mnths[cnt] + salary[month]
-#                    else:
-#                        emp_salary.append(0.00)
-#                else:
-#                    emp_salary.append('')
-#                    total_mnths[cnt] = ''
-#                cnt = cnt + 1
-        
+
         if len(self.rules) < 8:
             diff = 8 - len(self.rules)
             for x in range(0,diff):
@@ -171,57 +117,10 @@ class payroll_register_report(models.AbstractModel):
         return emp_salary, total, total_mnths
 
     def get_salary1(self, form, emp_id, emp_salary, total_mnths):
-#        category_id = form.get('category_id', [])
-#        category_id = category_id and category_id[0] or False
-        
-#        self.cr.execute("select to_char(date_to,'mm-yyyy') as to_date ,sum(pl.total) \
-#                             from hr_payslip_line as pl \
-#                             left join hr_payslip as p on pl.slip_id = p.id \
-#                             left join hr_employee as emp on emp.id = p.employee_id \
-#                             left join resource_resource as r on r.id = emp.resource_id  \
-#                            where p.state = 'done' and p.employee_id = %s and pl.category_id = %s \
-#                            group by r.name, p.date_to,emp.id",(emp_id, category_id,))
-#
-#        sal = self.cr.fetchall()
-#        salary = dict(sal)
-#        total = 0.0
-#        cnt = 1
-#        for month in self.mnths:
-#            if month <> 'None':
-#                if len(month) != 7:
-#                    month = '0' + str(month)
-#                if month in salary and salary[month]:
-#                    emp_salary.append(salary[month])
-#                    total += salary[month]
-#                    total_mnths[cnt] = total_mnths[cnt] + salary[month]
-#                else:
-#                    emp_salary.append(0.00)
-#            else:
-#                emp_salary.append('')
-#                total_mnths[cnt] = ''
-#            cnt = cnt + 1
-#        
-        
-        
-#        emp_obj = self.pool.get('hr.employee')        
-#        eid = emp_obj.browse(self.cr, self.uid, emp_id, context=self.context)
-#        emp_salary.append(eid.name)
         total = 0.0
         cnt = 0
         flag = 0
         for r in self.env['hr.salary.rule'].browse(self.rules):
-#        for r in self.rules:
-#            rname = self.pool.get('hr.salary.rule').browse(self.cr, self.uid, r)
-#            self.cr.execute("select pl.name as name ,pl.total \
-#                                 from hr_payslip_line as pl \
-#                                 left join hr_payslip as p on pl.slip_id = p.id \
-#                                 left join hr_payslip_run as pr on pr.id = p.payslip_run_id \
-#                                 left join hr_employee as emp on emp.id = p.employee_id \
-#                                 left join resource_resource as r on r.id = emp.resource_id  \
-#                                where p.employee_id = %s and pl.salary_rule_id = %s \
-#                                and (p.date_from >= %s) AND (p.date_to <= %s) \
-#                                and (pr.state != 'cancel')\
-#                                group by pl.total,r.name, pl.name,emp.id",(emp_id, r, form.get('start_date', False), form.get('end_date', False),))
             self._cr.execute("select pl.name as name ,pl.total \
                                  from hr_payslip_line as pl \
                                  left join hr_payslip as p on pl.slip_id = p.id \
@@ -229,58 +128,38 @@ class payroll_register_report(models.AbstractModel):
                                  left join resource_resource as r on r.id = emp.resource_id  \
                                 where p.employee_id = %s and pl.salary_rule_id = %s \
                                 and (p.date_from >= %s) AND (p.date_to <= %s) \
-                                group by pl.total,r.name, pl.name,emp.id",(emp_id, r.id, form.get('start_date', False), form.get('end_date', False),))
+                                group by pl.total,r.name, pl.name,emp.id", (emp_id, r.id, form.get('start_date', False),
+                                                                            form.get('end_date', False),))
 
             sal = self._cr.fetchall()
             salary = dict(sal)
-            cnt +=1
-            flag +=1
-#            if flag > 8:
-#                continue
+            cnt += 1
+            flag += 1
             if r.name in salary:
                 emp_salary.append(salary[r.name])
                 total += salary[r.name]
                 total_mnths[cnt] = total_mnths[cnt] + salary[r.name]
             else:
                 emp_salary.append('')
-#                total_mnths[cnt] = 0.0
-#            total = 0.0
-#            cnt = 1
-#            for month in self.rules_data:
-#                if month <> 'None':
-#                    if len(month) != 7:
-#                        month = '0' + str(month)
-#                    if month in salary and salary[month]:
-#                        emp_salary.append(salary[month])
-#                        total += salary[month]
-#                        total_mnths[cnt] = total_mnths[cnt] + salary[month]
-#                    else:
-#                        emp_salary.append(0.00)
-#                else:
-#                    emp_salary.append('')
-#                    total_mnths[cnt] = ''
-#                cnt = cnt + 1
-        
-#        if len(self.rules) < 8:
-#            diff = 8 - len(self.rules)
-#            for x in range(0,diff):
-#                emp_salary.append('')
         return emp_salary, total, total_mnths
 
-    def get_employee(self, form, excel=False):
+    def get_employee(self, form, excel=False, additional_fields=None):
         emp_salary = []
         salary_list = []
-        total_mnths=['Total', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #only for pdf report!
+        total_mnths = ['Total', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # only for pdf report!
         emp_obj = self.env['hr.employee']
         emp_ids = form.get('employee_ids', [])
         
-        total_excel_months = ['Total',]#for excel report
+        total_excel_months = ['Total']  # for excel report
         for r in range(0, len(self.rules)):
             total_excel_months.append(0)
-        employees  = emp_obj.browse(emp_ids)
+        employees = emp_obj.browse(emp_ids)
         for emp_id in employees:
             emp_salary.append(emp_id.name)
-            total = 0.0
+            if not additional_fields:
+                additional_fields = self.ADDITIONAL_HR_FIELDS
+            if additional_fields:
+                self.append_additional_fields(emp_salary, additional_fields)
             if excel:
                 emp_salary, total, total_mnths = self.get_salary1(form, emp_id.id, emp_salary, total_mnths=total_excel_months)
             else:
@@ -301,7 +180,6 @@ class payroll_register_report(models.AbstractModel):
                   continue
               self.total += item[count]
         return self.total
-    
 
     @api.model
     def render_html(self, docids, data=None):

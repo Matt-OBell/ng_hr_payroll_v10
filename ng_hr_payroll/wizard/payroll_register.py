@@ -20,13 +20,10 @@
 #
 ##############################################################################
 
-import time
 import xlwt
-# import cStringIO
-from io import StringIO, BytesIO
+from io import BytesIO
 import base64
 from odoo import models, api, fields, _
-# from odoo.addons.ng_hr_payroll.report import payroll_register_report
 
 
 class payroll_reg(models.TransientModel):
@@ -51,8 +48,6 @@ class payroll_reg(models.TransientModel):
          @param context: A standard dictionary
          @return: return report
         """
-
-        print("============================== Say cheese!!! ================================================")
         context = (self._context or {})
         datas = {'ids': context.get('active_ids', [])}
         res = self.read()
