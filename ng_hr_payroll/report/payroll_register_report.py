@@ -24,12 +24,14 @@ import time
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
+
 class payroll_register_report(models.AbstractModel):
     _name = "report.ng_hr_payroll.payroll_register_report"
 
     # Additional fields requested to be added to the report
     ADDITIONAL_HR_FIELDS = [
-        ('auto_staff_id', 'Staff ID'),
+        ('identification_id', 'Staff ID'),
+        ('month_increment', "Increment Period"),
         ('lga_id', 'Local Government'),
         ('school_id', 'School'),
         ('job_id', 'Designation'),
@@ -67,14 +69,22 @@ class payroll_register_report(models.AbstractModel):
         employee = self.env['hr.employee'].search([('name', 'ilike', primary_list[0])], limit=1)
         for field, field_string in additional_fields:
             if field in employee._fields:
-                if type(employee[field]) not in ['int', 'str', 'float']:
+                if not isinstance(employee[field], (int, str, float)):
                     try:
                         primary_list.append(employee[field].name or '')
                     except AttributeError:
                         primary_list.append('')
                 else:
                     try:
-                        primary_list.append(employee[field])
+                        if field != 'month_increment':
+                            primary_list.append(employee[field])
+                        elif field == 'month_increment':
+                            if employee[field] == '1':
+                                primary_list.append('January')
+                            elif employee[field] == '7':
+                                primary_list.append('July')
+                            else:
+                                primary_list.append('')
                     except AttributeError:
                         primary_list.append('')
             else:

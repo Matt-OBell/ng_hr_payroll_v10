@@ -82,7 +82,7 @@ class payroll_reg(models.TransientModel):
                 cell_count = 0
             sheet.write(row+1, 0, 'Total', value_style)
             total_datas = obj_pr.get_months_tol()
-            cell_count = 1
+            cell_count = 1 + len(obj_pr.ADDITIONAL_HR_FIELDS)
             row += 1
             for record in total_datas[-1][1:]:
                 sheet.write(row, cell_count, record, value_style)
@@ -96,9 +96,7 @@ class payroll_reg(models.TransientModel):
             actid = self.env.ref('base.action_attachment')[0]
             myres = actid.read()[0]
             myres['domain'] = "[('id','in',[" + ','.join(map(str, [ir_attachment])) + "])]"
-            print("++++++++++ Hello there ++++++++++++++++")
             return myres
-        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         return self.env['report'].get_action(self, 'ng_hr_payroll.payroll_register_report', data=datas)
 
     @api.multi
