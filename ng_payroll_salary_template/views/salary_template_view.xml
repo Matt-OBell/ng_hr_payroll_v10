@@ -18,7 +18,7 @@
                             <label for="name"/><br/><br/>
                             <field name="name"/>
                         </div>
-                        <group>
+                        <!--<group>
                             <group>
                                 <field name="department_sector_id" widget="selection"/>
                                 <field name="employment_type_id"/>
@@ -27,7 +27,7 @@
                                 <field name="grade_id" widget="selection"/>
                                 <field name="step_id" widget="selection"/>
                             </group>
-                        </group>
+                        </group>-->
                         <notebook>
                             <page string="Other fields">
                                 <group>
@@ -53,14 +53,14 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Sub Templates">
+                            <!--<page string="Sub Templates">
                                 <field name="child_ids" nolabel="1"/>
                             </page>
                             <page string="Parent Template">
                                 <group>
                                     <field name="parent_id" nolabel="0"/>
                                 </group>
-                            </page>
+                            </page>-->
                         </notebook>
                     </sheet>
                 </form>

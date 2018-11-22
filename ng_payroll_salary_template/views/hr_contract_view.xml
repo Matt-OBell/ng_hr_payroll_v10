@@ -10,9 +10,9 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//sheet//field[@name='job_id']" position="after">
-                    <field name="department_sector_id" readonly="0" />
+                    <!--<field name="department_sector_id" readonly="0" />
                     <field name="grade_id" readonly="0" />
-                    <field name="step_id" readonly="0" />
+                    <field name="step_id" readonly="0" />-->
                     <field name="template_id"/>
                 </xpath>
 

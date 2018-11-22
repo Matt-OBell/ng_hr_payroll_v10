@@ -4,3 +4,6 @@ from . import ng_hr_payroll_overtime
 from . import ng_hr_union
 from . import ng_hr_terminal
 from . import company
+from . import ng_hr_holiday
+from . import ng_hr_contract
+from . import ng_hr_payslip

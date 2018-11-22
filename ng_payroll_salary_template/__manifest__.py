@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Payroll Implementation Module",
+    'name': "Auto Populate Contract Module",
 
     'summary': """
-    Re-implement the payroll computation to reduce processing time and slowness experienced in the old system
+    Module allows for values to be populated on Employee contract when template is selected
     """,
 
     'description': """
-        Long description of module's purpose
+        - Add salary template object.
+        - Template object has fields corresponding to the payroll items
+        - Payroll items are auto populated on contract when salary template is selected
     """,
 
     'author': "Matt O'Bell Ltd",
@@ -24,21 +26,9 @@
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
+        # 'security/ir.model.access.csv',
         'views/salary_template_view.xml',
         'views/hr_contract_view.xml',
-        'views/res_company_view.xml',
-        'views/hr_employees_view.xml',
-        'views/department_sector_view.xml',
-        'views/emp_grade_view.xml',
-        'views/emp_step_view.xml',
-        'views/employment_type.xml',
-        'views/employee_school.xml',
-        'views/local_government.xml',
-        'data/employee_id_sequence.xml',
-        'data/employee_retirement_email.xml',
-        'wizard/increment_view.xml',
-        'wizard/promotion_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

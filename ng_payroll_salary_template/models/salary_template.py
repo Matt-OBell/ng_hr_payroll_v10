@@ -20,6 +20,7 @@ class SalaryTemplate(models.Model):
 
     _name = 'salary.template'
     _description = 'Salary Template'
+    _order = 'name asc'
 
     name = fields.Char(string="Description")
     state = fields.Selection(selection=[
@@ -29,9 +30,6 @@ class SalaryTemplate(models.Model):
     When a new record is created, the state is draft
     When the contract is confirmed, the state changes to confirm
     Contracts are only selectable from other models""")
-
-    parent_id = fields.Many2one('salary.template', string='Parent Template', index=True)
-    child_ids = fields.One2many('salary.template', 'parent_id', string=' Sub Template')
 
     # Float fields
     basic = fields.Float(string='Basic')
@@ -52,14 +50,6 @@ class SalaryTemplate(models.Model):
     hazard = fields.Float(string='Hazard',)
     call_duty_all = fields.Float(string='Call Duty Allowance')
     extra_two = fields.Float(string='Extra 2')
-
-    # Relational fields
-    department_sector_id = fields.Many2one(comodel_name="department.sector", string="Department Sector")
-    grade_id = fields.Many2one(comodel_name="emp.grade", string="Grade",
-                               # domain=[('dept_sector_id', '=', department_sector_id)]
-                               )
-    step_id = fields.Many2one(comodel_name="emp.step", string="Step")
-    employment_type_id = fields.Many2one('employment.type', string="Employment Type")
 
     @api.constrains('parent_id')
     def _check_parent_id(self):
