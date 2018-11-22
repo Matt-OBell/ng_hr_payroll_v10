@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 
@@ -14,13 +13,17 @@ class hr_contract(models.Model):
     _description = 'HR Contract'
 
     leave_allow_day = fields.Float(string='Earned Leave Allowance (Amount)',
-                                   help='Please specify Earned leave allowance per day for employee which will be use while deducting from salary for unapproved leaves.')
+                                   help='Please specify Earned leave allowance per day for employee which will be use '
+                                        'while deducting from salary for unapproved leaves.')
     pension_company = fields.Float(string='Pension Company Contribution (%)',
-                                   help='Please give % between 0-100 for Pension from Company Contribution.', default=7.5)
+                                   help='Please give % between 0-100 for Pension from Company Contribution.',
+                                   default=7.5)
     pension_employee = fields.Float(string='Pension Employee Contribution (%)',
                                     help='Employee Contribution for Pension in % between 0-100.', default=7.5)
-    hra = fields.Float(string='House Rent Allowance (%)', digits=dp.get_precision(
-        'Payroll'), help="HRA is an allowance given by the employer to the employee for taking care of his rental or accommodation expenses, Please specify % between 0-100 for HRA given to Employee.", default=75.0)
+    hra = fields.Float(string='House Rent Allowance (%)', digits=dp.get_precision('Payroll'),
+                       help="""HRA is an allowance given by the employer to the employee for taking care of his rental 
+                       or accommodation expenses, Please specify % between 0-100 for HRA given to Employee.""",
+                       default=75.0)
     
     def onchange_employee_id(self):
         """Pick the corresponding job_id for selected employee"""
@@ -47,7 +50,8 @@ class hr_contract(models.Model):
     rural_posting = fields.Float(string='Rural Posting', readonly=True, compute="_compute_field_value", store=True)
     shift_allowance = fields.Float(string='Shift Allowance', readonly=True, compute="_compute_field_value", store=True)
     hazard = fields.Float(string='Hazard', readonly=True, compute="_compute_field_value", store=True)
-    call_duty_all = fields.Float(string='Call Duty Allowance', readonly=True, compute="_compute_field_value", store=True)
+    call_duty_all = fields.Float(string='Call Duty Allowance', readonly=True, compute="_compute_field_value",
+                                 store=True)
     extra_two = fields.Float(string='Extra 2', readonly=True, compute="_compute_field_value", store=True)
 
     @api.multi
