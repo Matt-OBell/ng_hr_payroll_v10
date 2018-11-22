@@ -132,7 +132,7 @@ class payroll_advice(models.Model):
     bank_account_no = fields.Char('Bank Account Number')
     batch_id = fields.Many2one('hr.payslip.run', string='Batch', readonly=True)
 
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
 
     @api.multi
     def compute_advice(self):

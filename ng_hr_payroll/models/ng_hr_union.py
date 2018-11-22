@@ -8,7 +8,7 @@ from odoo import models, fields, api
 class employee_notice(models.Model):
     _name = 'employee.notice'
     _description = 'Notice Details'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
 
     @api.multi
     def onchange_employee_id(self, employee_id=False):
@@ -153,7 +153,7 @@ class employee_notice(models.Model):
         if ids:
             return ids
 
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
 
     name = fields.Char(string='Description', required=True, readonly=False, states={'validate': [('readonly', True)]})
     user_id = fields.Many2one('res.users', string='Responsible User', readonly=False,
@@ -208,7 +208,7 @@ class employee_notice(models.Model):
 class union_policy(models.Model):
     _name = 'union.policy'
     _description = 'union Policy Details'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
 
     name = fields.Char(string='Name', required=True)
     code = fields.Char(string='Code', required=True)
@@ -228,7 +228,7 @@ class union_policy(models.Model):
 class union(models.Model):
     _name = "emp.union"
     _description = "Union"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
 
     name = fields.Char(string='Name', required=True)
     code = fields.Char(string='Code')

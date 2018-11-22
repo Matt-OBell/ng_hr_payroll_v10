@@ -25,7 +25,7 @@ class hr_overtime(models.Model):
         self.company_id = self.employee_id.company_id.id
         self.manager_id = self.employee_id.parent_id.id
 
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
 
     name = fields.Char(string='Description', required=True, states={'validate': [('readonly', True)]})
     number_of_hours = fields.Float(string='Number of Hours', states={'validate': [('readonly', True)]})

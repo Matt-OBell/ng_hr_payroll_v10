@@ -126,7 +126,7 @@ class contract(models.Model):
 class salary_increment(models.Model):
     _name = 'salary.increment'
     _description = 'Salary increment'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
     
     @api.model
     def _employee_get(self):

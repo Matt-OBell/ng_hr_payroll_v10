@@ -30,6 +30,7 @@
     -bug:report should be print each employee detail in new pag
     """,
     'active': False,
+    'summary': """Adds all the features as found in Nigeria payroll system: from overtime to holidays to payslip""",
     'data': [
         'security/hr_security.xml',
         'security/ir.model.access.csv',
@@ -40,6 +41,8 @@
         'views/ng_hr_payroll_view.xml',
         'views/ng_hr_union_view.xml',
         'views/ng_hr_terminal_view.xml',
+        'views/hr_contract_view.xml',
+        'views/salary_template_view.xml',
         'report/ng_hr_payroll_report.xml',
         'data/ng_hr_payroll_sequence.xml',
         'data/ng_hr_payroll_data.xml',
