@@ -40,18 +40,7 @@ class payroll_reg(models.TransientModel):
     employee_ids = fields.Many2many('hr.employee', 'payroll_register_rel', 'payroll_year_id', 'employee_id', string='Employees', required=True)
     rule_ids = fields.Many2many('hr.salary.rule', 'payroll_register_rel_salary', 'reg_id', 'rule_id', string='Salary Rules', required=True)
     xls_output = fields.Boolean(string='Excel Output', help='Tick if you want to output of report in excel sheet')
-#        'category_id': fields.many2one('hr.salary.rule.category', 'Category', required=True),
 
-#    def _get_default_category(self, cr, uid, context=None):
-#        category_ids = self.pool.get('hr.salary.rule.category').search(cr, uid, [('code', '=', 'NET')], context=context)
-#        return category_ids and category_ids[0] or False
-
-#     _defaults = {
-#         'start_date': lambda *a: time.strftime('%Y-01-01'),
-#         'end_date': lambda *a: time.strftime('%Y-%m-%d'),
-#         'category_id': _get_default_category
-#     }
-#         'end_date': lambda *a: time.strftime('%Y-%m-%d'),
     @api.multi
     def print_report(self, data):
         """
@@ -105,54 +94,18 @@ class payroll_reg(models.TransientModel):
             for record in total_datas[-1][1:]:
                 sheet.write(row, cell_count, record, value_style)
                 cell_count += 1
-                # row += 1
-                # cell_count = 0
-                # sheet.write(row+1, cell_count, v, value_style)
-
-
-
-
-
-
-
-
-            # total_datas = obj_pr.get_months_tol()
-            # cell_count = 1
-            # row += 1
-
-            # for value in total_datas:
-            #     for v in value[1:]:
-            #         sheet.write(row, cell_count, v, value_style)
-            #         print "sheet", sheet
-            #         cell_count += 1
-                # row += 1
-                # cell_count = 0
             stream = BytesIO()
             workbook.save(stream)
-            ctx = {'default_xls_output': base64.encodebytes(stream.getvalue())}
+            ctx = {'default_xls_output': base64.b64encode(stream.getvalue())}
             ir_attachment = self.env['ir.attachment'].create({
                 'name': self.name + '.xls',
-                'datas': base64.encodebytes(stream.getvalue()),
+                'datas': base64.b64encode(stream.getvalue()),
                 'datas_fname': self.name + '.xls'}).id
 
-            # actid = self.env.get('ir.model.data').get_object_reference(cr, uid, 'base', 'action_attachment')[1]
             actid = self.env.ref('base.action_attachment')[0]
             myres = actid.read()[0]
             myres['domain'] = "[('id','in',[" + ','.join(map(str, [ir_attachment])) + "])]"
             return myres
-            return {
-                'context': ctx,
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'account.xls.output.wiz',
-                'type': 'ir.actions.act_window',
-                'target': 'new',
-                }
-#        return {
-#            'type': 'ir.actions.report.xml',
-#            'report_name': 'hr.payroll.register',
-#            'datas': datas,
-#       }
         return self.env['report'].get_action(self, 'ng_hr_payroll.payroll_register_report', data=datas)
 
     @api.multi
